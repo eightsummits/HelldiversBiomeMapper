@@ -17,7 +17,7 @@
 
   <title>Helldivers 2 Biome Mapper</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
-  <link rel="stylesheet" href="style.min.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
@@ -31,24 +31,64 @@
   <div id="dialogBox" class="hidden">
     <button id="closeDialogBtn" aria-label="Close dialog">&times;</button>
     <div class="dialog-content">
-      <h2>APPLICATION USER MANUAL FOR PROSPECTIVE HELLDIVERS</h2>
-      <p>Refresh the app manually to fetch live data for budgetary reasons.</p>
-      <p>Hover over planets to see their name, biome, sector, and dangers.</p>
-      <p>You can hide unplayable planets with the planet button.</p>
-      <button class="mock-hideBtn">
-        <span class="circle"></span>
-      </button>
-      <p>Click on a biome to filter to the planets of that biome.</p>
-      <p>You can pin a biome to always show with the radio button.</p>
-      <button class="mock-toggle" aria-pressed="false" aria-label="Mock Toggle"></button>
-      <p>The yellow dots indicate how lucrative a biome is for points of interest.</p>
-      <div class="mock-hippo-buttons">
-        <button class="mock-hippo-dot" aria-label="Mock Yellow Hippo 1"></button>
-        <button class="mock-hippo-dot" aria-label="Mock Yellow Hippo 2"></button>
-        <button class="mock-hippo-dot" aria-label="Mock Yellow Hippo 3"></button>
+      <div class="dialog-header">
+        <h2>APPLICATION USER MANUAL FOR PROSPECTIVE HELLDIVERS</h2>
+        <div class="tutorial-pagination">
+          <div class="tutorial-pagination-button">1</div>
+          <div class="tutorial-pagination-button">2</div>
+          <div class="tutorial-pagination-button">3</div>
+          <div class="tutorial-pagination-button">4</div>
+        </div>
       </div>
-      <p>The existence of low yield biomes implies the existence of high yield biomes, and we can take some solace in
-        that.</p>
+      <div class="dialog-page" data-page="1">
+        <p>Refresh the app manually to fetch live data for budgetary reasons.</p>
+        <p>Hover over planets to see their name, biome, sector, and dangers.</p>
+        <p>You can hide unplayable planets with the planet button.</p>
+        <button class="mock-hideBtn">
+          <span class="circle"></span>
+        </button>
+        <p>You can pin a biome to always show with the radio button.</p>
+        <button class="mock-toggle" aria-pressed="false" aria-label="Mock Toggle"></button>
+        <p>The yellow dots indicate how lucrative a biome is for points of interest.</p>
+        <div class="mock-hippo-buttons">
+          <button class="mock-hippo-dot" aria-label="Mock Yellow Hippo 1"></button>
+          <button class="mock-hippo-dot" aria-label="Mock Yellow Hippo 2"></button>
+          <button class="mock-hippo-dot" aria-label="Mock Yellow Hippo 3"></button>
+        </div>
+        <p>The existence of low yield biomes implies the existence of high yield biomes, and we can take some solace in
+          that.</p>
+      </div>
+
+      <div class="dialog-page" data-page="2">
+        <p>Explanation of the map:</p>
+        <div class="mock-planet red"></div><p>Automaton Planet</p>
+        <div class="mock-planet yellow"></div><p>Terminid Planet</p>
+        <div class="mock-planet purple"></div><p>Illuminate Planet</p>
+        <div class="mock-planet duotone"></div><p>Planet Currently In Conflict</p>
+        <p>Hover over planets to see their Name, Sector, Biome, and type of danger.</p>
+      </div>
+
+      <div class="dialog-page" data-page="3">
+        <p>Data and reasoning behind the yellow dots:</p>
+        <p>The basis of the yellow dot (hippo dot) system comes from Claysthetic's farming ranking:</p>
+        <a href="images/dengmap.jpg" target="_blank" style="color:white">OPEN THE FARMING MAP</a>
+        <p>We deem this a pretty fine empirical resource for farming overall.</p>
+        <p>However we made small changes based on farming out all of the currently available warbonds.</p>
+        <p>There are biomes that are more prone to give a 'perfect circle' of POIs given the right map conditions.</p>
+        <p>The more prone is a biome, the higher the dot ranking.</p>
+        <p>Further explanation of map conditions and how to farm on the next page.</p>
+      </div>
+
+      <div class="dialog-page" data-page="4">
+        <p>How to effectively use this tool:</p>
+        <p>A good example of planets are Grand Errant and Phact Bay.</p>
+        <p>When you visit a higher yield system, you would like to start on a map that has few obstacles.</p>
+        <img src="images/goodmap.jpg" style="width: 200px">
+        <p>No water, cities, pits, anything that can obstruct the POIs or make them harder to get.</p>
+        <p>Best to go on Trivial difficulty, as patrols are low, and samples are not in containers blocking resources.</p>
+        <p>If you have picked a good map, the resources should line up in a 'perfect circle'.</p>
+        <img src="images/perfectcircle.jpg" style="width: 200px">
+      </div>
     </div>
 
   </div>
@@ -83,7 +123,7 @@
       <div id="link-text">eightsummits.io</div>
     </div>
   </a>
-  <script src="app.min.js"></script>
+  <script src="app.js"></script>
 </body>
 
 

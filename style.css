@@ -1,0 +1,741 @@
+@font-face {
+    font-family: 'SquaresBold';
+    src: url('fonts/SquaresBold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+.hover-name {
+    font-family: 'SquaresBold', sans-serif;
+}
+
+#sectorName {
+    font-family: 'SquaresBold', sans-serif;
+}
+
+body {
+    margin: 0;
+    display: flex;
+    font-family: sans-serif;
+    background: #111;
+    color: white;
+    height: 100vh;
+    overflow: hidden;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#planetCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 380px;
+    /* reserve space for biomeList */
+    bottom: 0;
+    background-color: #000;
+    cursor: grab;
+    user-select: none;
+    z-index: 0;
+    width: auto;
+    height: 100vh;
+    -webkit-tap-highlight-color: transparent;
+    transition: right 0.3s ease;
+}
+
+.biome {
+    position: relative;
+    margin-bottom: 10px;
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.2s, border 0.2s;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    user-select: none;
+}
+
+.biome img {
+    width: 100%;
+    border-radius: 5px;
+    display: block;
+}
+
+.biome.selected {
+    opacity: 1;
+    border-color: #0ff;
+}
+
+.hippo-dots {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: flex;
+    gap: 3px;
+}
+
+.hippo-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: grey;
+}
+
+.hippo-dot.yellow {
+    background-color: yellow;
+}
+
+.biome .hover-name {
+    position: absolute;
+    bottom: 6px;
+    right: 8px;
+    color: yellow;
+    font-weight: bold;
+    font-size: 14px;
+    pointer-events: none;
+    user-select: none;
+    display: none;
+    text-shadow: 0 0 3px black;
+    white-space: nowrap;
+}
+
+.biome:not(.selected):hover .hover-name {
+    display: block;
+}
+
+.biome.selected .hover-name {
+    display: block;
+}
+
+.biome.pinned .hover-name {
+    display: block;
+}
+
+.toggle-wrapper {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    display: flex;
+    align-items: center;
+    user-select: none;
+    pointer-events: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+.toggle {
+    width: 32px;
+    height: 18px;
+    background-color: #888;
+    border-radius: 9px;
+    position: relative;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0;
+}
+
+.toggle.on {
+    background-color: #f9d71c;
+    box-shadow: 0 0 6px 1px #f9d71c99;
+}
+
+.toggle-circle {
+    width: 14px;
+    height: 14px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: left 0.3s ease;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+}
+
+.toggle.on .toggle-circle {
+    left: 16px;
+    background-color: #fff842;
+    box-shadow: 0 0 6px #f9d71c;
+}
+
+.toggle,
+.toggle-circle {
+    pointer-events: none;
+}
+
+/* #region Hamburger button */
+
+/* Hamburger button fixed top-right offset to the left of biomeList */
+#hamburgerBtn {
+    position: fixed;
+    top: 10px;
+    right: 390px;
+    /* 380 (biomeList) + 10 px margin */
+    width: 32px;
+    height: 32px;
+    background: #444;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 4px 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1100;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    transition: right 0.3s ease;
+}
+
+#hamburgerBtn span {
+    display: block;
+    width: 20px;
+    height: 2.5px;
+    background: white;
+    border-radius: 2px;
+}
+
+/* Biome list fixed on the right */
+#biomeList {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 380px;
+    height: 100vh;
+    overflow-y: auto;
+    background-color: #222;
+    padding: 10px;
+    padding-bottom: 150px;
+    box-sizing: border-box;
+    user-select: none;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    margin-bottom: 50px;
+}
+
+/* Slide biome list out of view */
+#biomeList.closed {
+    transform: translateX(100%);
+}
+
+/* Canvas fills space left by biome list */
+#planetCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 380px;
+    /* reserve space for biomeList */
+    bottom: 0;
+    background-color: #000;
+    cursor: grab;
+    user-select: none;
+    z-index: 0;
+    width: auto;
+    height: 100vh;
+    -webkit-tap-highlight-color: transparent;
+    transition: right 0.3s ease;
+}
+
+/* Canvas expands when biome list hidden */
+#biomeList.closed~#planetCanvas {
+    right: 0;
+}
+
+/* Hamburger moves to right edge when biome list closed */
+#hamburgerBtn.closed {
+    right: 10px;
+}
+
+/* #endregion */
+
+/* #region Hide unplayable planets button */
+
+#hideBtn {
+    position: fixed;
+    top: 50px;
+    /* Below hamburgerBtn (which is 10px + 32px height + 8px margin) */
+    right: 390px;
+    /* same as hamburgerBtn */
+    width: 32px;
+    height: 32px;
+    background: #444;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 4px 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1100;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    transition: right 0.3s ease;
+}
+
+#hideBtn span {
+    display: block;
+    width: 20px;
+    height: 2.5px;
+    background: white;
+    border-radius: 2px;
+}
+
+#hideBtn.closed {
+    right: 10px;
+}
+
+#hideBtn .circle {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: grey;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    pointer-events: none;
+    box-shadow: none;
+}
+
+#hideBtn.on .circle {
+    background-color: yellow;
+    box-shadow: 0 0 8px 2px #f9d71c99;
+}
+
+/* #endregion */
+
+#sectorName {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    padding: 6px 12px;
+    border: 2px solid whitesmoke;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.7);
+    font-family: 'SquaresBold', sans-serif;
+    z-index: 1200;
+    pointer-events: none;
+    user-select: none;
+}
+
+#sectorName h1 {
+    margin: 0;
+    font-size: 20px;
+    color: white;
+    text-shadow: 0 0 3px black;
+    font-weight: normal;
+}
+
+/* #region Tutorial dialog */
+/* Overlay */
+#dialogBtn {
+    position: fixed;
+    top: 90px;
+    /* below the other two */
+    right: 390px;
+    width: 32px;
+    height: 32px;
+    background: #444;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1100;
+    transition: right 0.3s;
+    font-family: 'SquaresBold';
+}
+
+#dialogBtn.closed {
+    right: 10px;
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 2000;
+}
+
+#dialogBox {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    width: 90%;
+    max-width: 400px;
+    height: 80vh;
+
+    overflow-y: auto;
+
+    opacity: 0;
+    pointer-events: none;
+    background: #333;
+    color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    z-index: 2100;
+    box-shadow: 0 0 10px #000;
+    font-family: 'SquaresBold';
+
+    transform: scale(0.95);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#dialogBox.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+}
+
+#dialogBox::-webkit-scrollbar {
+    display: none;
+}
+
+/* Close button */
+#closeDialogBtn {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.dialog-content {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.dialog-content::-webkit-scrollbar {
+    display: none;
+}
+
+/* Dialog content */
+.dialog-content h2 {
+    margin-top: 0;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.dialog-content p {
+    font-size: 14px;
+}
+
+/* Dialog pages */
+.dialog-page {
+  display: none;
+}
+
+.dialog-page.visible {
+  display: block;
+}
+
+/* Hidden utility class */
+/* .hidden {
+  display: none;
+} */
+
+/* Base hidden state */
+#overlay,
+#dialogBox {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.95);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Visible state */
+#overlay.visible,
+#dialogBox.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+}
+
+/* #endregion */
+
+/* #region: Mocks */
+
+.mock-hideBtn {
+    width: 32px;
+    height: 32px;
+    background: #444;
+    border: none;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background-color 0.3s;
+}
+
+.mock-hideBtn .circle {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: grey;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    box-shadow: none;
+}
+
+/* Optional 'on' style */
+.mock-hideBtn.on .circle {
+    background-color: #ff0;
+    box-shadow: 0 0 8px 2px #f9d71c99;
+}
+
+.mock-hippo-buttons {
+    display: flex;
+    gap: 8px;
+    /* spacing between dots */
+    align-items: center;
+    justify-content: center;
+}
+
+.mock-hippo-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #ff0;
+    /* bright yellow */
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 6px 1px #f9d71c99;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    padding: 0;
+    margin: 0;
+}
+
+.mock-hippo-dot:hover {
+    background-color: #fff842;
+    box-shadow: 0 0 8px 2px #f9d71c;
+}
+
+.mock-toggle {
+    width: 32px;
+    height: 18px;
+    background-color: #888;
+    border-radius: 9px;
+    position: relative;
+    cursor: pointer;
+    border: none;
+    user-select: none;
+    transition: background-color 0.3s;
+}
+
+.mock-toggle::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    background-color: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+    transition: left 0.3s, background-color 0.3s, box-shadow 0.3s;
+}
+
+.mock-toggle.on {
+    background-color: #f9d71c;
+    box-shadow: 0 0 6px 1px #f9d71c99;
+}
+
+.mock-toggle.on::before {
+    left: 16px;
+    background-color: #fff842;
+    box-shadow: 0 0 6px #f9d71c;
+}
+
+.mock-planet {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+}
+
+.mock-planet.red {
+    background-color: red;
+}
+
+.mock-planet.yellow {
+    background-color: yellow;
+}
+
+.mock-planet.purple {
+    background-color: purple;
+}
+
+.mock-planet.duotone {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: linear-gradient(to right, red 50%, cyan 50%);
+}
+
+/* #endregion */
+
+/* #region Link-wrapper */
+
+#link-wrapper {
+    font-size: 12px;
+    position: fixed;
+    bottom: 10px;
+    right: 30px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background: #00000044;
+    border-radius: 8px;
+    box-shadow: 0 0 6px 2px rgba(128, 128, 128, 0.5);
+    cursor: pointer;
+    overflow: hidden;
+    font-family: 'SquaresBold';
+
+    width: fit-content;
+    height: fit-content;
+    padding: 10px;
+
+    transition: width 0.35s ease;
+}
+
+/* #endregion */
+
+/* #region Tutorial Pagination */
+.tutorial-pagination {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.tutorial-pagination-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #888888;
+    border-radius: 8px;
+    cursor: pointer;
+    overflow: hidden;
+    font-family: 'SquaresBold';
+
+    height: 48px;
+    width: 32px;
+    padding: 0 8px;
+
+    transition: width 0.35s ease;
+}
+
+.tutorial-pagination-button.selected{
+    display: flex;
+    align-items: center;
+    background: #121212;
+    border-radius: 8px;
+    cursor: pointer;
+    overflow: hidden;
+    font-family: 'SquaresBold';
+
+    height: 48px;
+    width: 32px;
+    padding: 0 8px;
+
+    transition: width 0.35s ease;
+}
+
+/* #endregion */
+
+/* #region Ko-fi */
+
+#kofi-wrapper {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    background: #000;
+    border-radius: 8px;
+    box-shadow: 0 0 6px 2px rgba(128, 128, 128, 0.5);
+    cursor: pointer;
+    overflow: hidden;
+    font-family: 'SquaresBold';
+
+    height: 48px;
+    width: 32px;
+    padding: 0 8px;
+
+    transition: width 0.35s ease;
+}
+
+#kofi-wrapper:hover {
+    width: 345px;
+}
+
+#kofi-icon-container {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#kofi-icon-container img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+#kofi-text {
+    white-space: nowrap;
+    color: white;
+    font-family: 'SquaresBold';
+    font-weight: bold;
+    margin-left: 12px;
+
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    pointer-events: none;
+}
+
+#kofi-wrapper:hover #kofi-text {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+/* #endregion */
+
+/* Responsive on small screens */
+@media (max-width: 480px) {
+    #hamburgerBtn {
+        right: 90vw;
+        /* default when open: 80vw + 10 margin */
+    }
+
+    #hamburgerBtn.closed {
+        right: 10px;
+    }
+
+    #biomeList {
+        width: 80vw;
+    }
+
+    #biomeList.closed {
+        transform: translateX(100%);
+    }
+
+    #planetCanvas {
+        right: 80vw;
+    }
+}
